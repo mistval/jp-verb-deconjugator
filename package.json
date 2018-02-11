@@ -15,7 +15,11 @@
     "verbs",
     "jp",
     "conjugator",
-    "conjugation"
+    "conjugation",
+    "unconjugate",
+    "deconjugate",
+    "unconjugation",
+    "deconjugation"
   ],
   "author": "Randall Schmidt",
   "license": "MIT",
