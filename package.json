@@ -1,7 +1,7 @@
 {
   "name": "jp-verbs",
   "version": "1.0.0",
-  "description": "Conjugate Japanese verbs and extract Japanese verbs from text.",
+  "description": "Conjugate Japanese verbs.",
   "main": "index.js",
   "scripts": {
     "test": "nyc mocha"
