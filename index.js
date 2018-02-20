@@ -44,14 +44,22 @@ function sortByLikelihood(results) {
   });
 }
 
-function getCandidateDerivationsForWordType(wordType) {
+function filterWordEndsWithConjugatedWordEnding(word, derivations) {
+  return derivations.filter(derivation => word.endsWith(derivation.conjugatedEnding));
+}
+
+function getCandidateDerivations(wordType, word, previousNonSilentDerivation) {
   // SENTENCE is a special word type that allows any
-  // derivation whose conjugated word ending matches its
+  // derivation whose conjugated word ending matches its/
   // ending.
+  let candidateDerivations;
   if (wordType === WordType.SENTENCE) {
-    return derivationTable;
+    candidateDerivations = derivationTable;
+  } else {
+    candidateDerivations = derivationRulesForConjugatedWordType[wordType];
   }
-  return derivationRulesForConjugatedWordType[wordType];
+
+  return filterWordEndsWithConjugatedWordEnding(word, candidateDerivations);
 }
 
 function derivationIsSilent(derivation) {
@@ -62,6 +70,7 @@ function createNewDerivationSequence() {
   return {
     nonSilentDerivationsTaken: [],
     nonSilentWordFormProgression: [],
+    allDerivationsTaken: [],
   };
 }
 
@@ -69,16 +78,18 @@ function copyDerivationSequence(derivationSequence) {
   return {
     nonSilentDerivationsTaken: derivationSequence.nonSilentDerivationsTaken.slice(),
     nonSilentWordFormProgression: derivationSequence.nonSilentWordFormProgression.slice(),
+    allDerivationsTaken: derivationSequence.allDerivationsTaken.slice(),
   };
 }
 
 function addDerivationToSequence(derivationSequence, derivation, derivedWord) {
+  derivationSequence = copyDerivationSequence(derivationSequence);
   if (!derivationIsSilent(derivation)) {
-    derivationSequence = copyDerivationSequence(derivationSequence);
     derivationSequence.nonSilentDerivationsTaken.push(derivation);
     derivationSequence.nonSilentWordFormProgression.push(derivedWord);
   }
 
+  derivationSequence.allDerivationsTaken.push(derivation);
   return derivationSequence;
 }
 
@@ -106,7 +117,26 @@ function wordEndsWithDerivationsConjugatedEnding(word, derivation) {
   return word.endsWith(derivation.conjugatedEnding);
 }
 
+function tookInvalidDerivationPath(derivationSequence) {
+  let allDerivationsTaken = derivationSequence.allDerivationsTaken;
+  let lastDerivation = allDerivationsTaken[allDerivationsTaken.length - 1];
+  let secondToLastDerivation = allDerivationsTaken[allDerivationsTaken.length - 2];
+
+  if (!lastDerivation || !secondToLastDerivation) {
+    return false;
+  }
+  if (lastDerivation.cannotFollow && ~lastDerivation.cannotFollow.indexOf(secondToLastDerivation.conjugatedWordType)) {
+    return true;
+  }
+
+  return false;
+}
+
 function unconjugateRecursive(word, wordType, derivationSequence, level, levelLimit) {
+  if (tookInvalidDerivationPath(derivationSequence)) {
+    return [];
+  }
+
   // Recursion is going too deep, abort.
   //
   // There should not be any potential for infinite recursion,
@@ -115,6 +145,8 @@ function unconjugateRecursive(word, wordType, derivationSequence, level, levelLi
   if (level > levelLimit) {
     return [];
   }
+
+  let previousNonSilentDerivation = derivationSequence.nonSilentDerivationsTaken[derivationSequence.nonSilentDerivationsTaken.length - 1];
 
   // Check if we have reached a potentially valid result.
   let results = [];
@@ -128,13 +160,10 @@ function unconjugateRecursive(word, wordType, derivationSequence, level, levelLi
   }
 
   // Take possible derivation paths
-  for (let candidateDerivation of getCandidateDerivationsForWordType(wordType)) {
-    let shouldFollowThisCandidateDerivation = wordEndsWithDerivationsConjugatedEnding(word, candidateDerivation);
-    if (shouldFollowThisCandidateDerivation) {
-      let nextDerivationSequence = addDerivationToSequence(derivationSequence, candidateDerivation, word);
-      let unconjugatedWord = unconjugateWord(word, candidateDerivation);
-      results = results.concat(unconjugateRecursive(unconjugatedWord, candidateDerivation.unconjugatedWordType, nextDerivationSequence, level + 1, levelLimit));
-    }
+  for (let candidateDerivation of getCandidateDerivations(wordType, word, previousNonSilentDerivation)) {
+    let nextDerivationSequence = addDerivationToSequence(derivationSequence, candidateDerivation, word);
+    let unconjugatedWord = unconjugateWord(word, candidateDerivation);
+    results = results.concat(unconjugateRecursive(unconjugatedWord, candidateDerivation.unconjugatedWordType, nextDerivationSequence, level + 1, levelLimit));
   }
   return results;
 }

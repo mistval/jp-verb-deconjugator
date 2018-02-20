@@ -110,9 +110,9 @@ module.exports = {
   SHIDAI: '次第・しだい Immediately After',
   YAGARU: 'やがる Shows Contempt For The Action Being Done',
   BEKU: 'べく In Order To',
-  GODAN_VERB: 'godan verb (silent)',
-  ICHIDAN_VERB: 'ichidan verb (silent)',
-  ADJECTIVE: 'adjective (silent)',
+  GODAN_VERB: 'godan verb',
+  ICHIDAN_VERB: 'ichidan verb',
+  ADJECTIVE: 'adjective',
   SENTENCE_ENDING_PARTICLES: 'sentence ending particles (silent)',
   NEGATIVE_ARU_OR_IRU: 'Negative ある or いる',
 };
