@@ -2,20 +2,8 @@
 const derivationTable = require('./derivations.js');
 const WordType = require('./word_type.js');
 const DerivationAttribute = require('./derivation_attribute.js');
-const dictionary = require('./dictionary.json');
+const frequencyForWord = require('./frequencyForWord.json');
 const VerbType = require('./verb_type.js');
-
-// Create separate sets for suru verbs and non suru verbs.
-
-let suruVerbSet = {};
-let ichiGoDanVerbSet = {};
-for (let wordInformation of dictionary) {
-  if (wordInformation.verbType === VerbType.NON_SURU_VERB) {
-    ichiGoDanVerbSet[wordInformation.verb] = true;
-  } else {
-    suruVerbSet[wordInformation.verb] = true;
-  }
-}
 
 // For performance, map each rule to the conjugated word type that it can follow.
 
@@ -29,163 +17,123 @@ for (let rule of derivationTable) {
   derivationRulesForConjugatedWordType[conjugatedWordType].push(rule);
 }
 
-function isSuru(result) {
-  return result.base === 'する';
+function frequencyRankExistsForWord(word) {
+  return frequencyForWord[word] !== undefined;
 }
 
-// This is almost always, but not always, an accurate heuristic.
-function isSuruVerb(result) {
-  return result.base.endsWith('する');
-}
-
-function preferTrue(a, b) {
-  if (a && !b) {
-    return -1;
-  } else if (b && !a) {
-    return 1;
-  } else {
-    return 0;
-  }
-}
-
-function preferSuru(a, b) {
-  return preferTrue(isSuru(a), isSuru(b));
-}
-
-function preferNonSuruVerb(a, b) {
-  return preferTrue(!isSuruVerb(a), !isSuruVerb(b));
-}
-
-const impossibleSequences = [
-  [WordType.POTENTIAL, WordType.POTENTIAL_PASSIVE],
-];
-
-function hasImpossibleSequence(result) {
-  const separator = '|';
-  let pathString = result.derivationPath.join(separator);
-  for (let impossibleSequence of impossibleSequences) {
-    let impossibleSequenceString = impossibleSequence.join('|');
-    if (pathString.indexOf(impossibleSequenceString) !== -1) {
-      return true;
-    }
-  }
-  return false;
-}
-
-function filterResultsWithImpossibleSequences(results) {
-  return results.filter(result => !hasImpossibleSequence(result));
-}
-
-// This heuristic improves the results,
-// but still makes a lot of mistakes.
-// I think it might be best to sort
-// results by the ranking of the base
-// word in a word frequency list. That's
-// TODO
+// Sort by the frequency of the base word.
 function sortByLikelihood(results) {
-  results = results.sort((a, b) => {
-    let preference = 0;
-    preference = preferSuru(a, b);
-    if (preference) {
-      return preference;
+  let resultsCopy = results.slice();
+  return resultsCopy.sort((a, b) => {
+    let aBase = a.base;
+    let bBase = b.base;
+
+    let aHasFrequency = frequencyRankExistsForWord(aBase);
+    let bHasFrequency = frequencyRankExistsForWord(bBase);
+
+    if (!aHasFrequency && !bHasFrequency) {
+      return 0;
     }
-    preference = preferNonSuruVerb(a, b);
-    if (preference) {
-      return preference;
+    if (!aHasFrequency) {
+      return 1;
     }
-    return a.derivationPath.length - b.derivationPath.length;
+    if (!bHasFrequency) {
+      return -1;
+    }
+    return frequencyForWord[bBase] - frequencyForWord[aBase];
   });
-  return results;
 }
 
 function getCandidateDerivationsForWordType(wordType) {
+  // SENTENCE is a special word type that allows any
+  // derivation whose conjugated word ending matches its
+  // ending.
   if (wordType === WordType.SENTENCE) {
     return derivationTable;
   }
   return derivationRulesForConjugatedWordType[wordType];
 }
 
-function canTakeDerivationPath(word, nextCandidateDerivation) {
-  return word.endsWith(nextCandidateDerivation.conjugatedEnding);
-}
-
-function reduceResultDerivationsToWordTypes(results) {
-  for (let result of results) {
-    result.derivationPath = result.derivationPath.map(derivation => derivation.conjugatedWordType);
-  }
-  return results;
-}
-
 function derivationIsSilent(derivation) {
   return derivation.attributes && derivation.attributes.indexOf(DerivationAttribute.SILENT) !== -1;
 }
 
-class DerivationInformation {
-  constructor(derivationPath, derivationSequence) {
-    if (derivationPath) {
-      this.derivationPath = derivationPath.slice();
-    } else {
-      this.derivationPath = [];
-    }
-
-    if (derivationSequence) {
-      this.derivationSequence = derivationSequence.slice();
-    } else {
-      this.derivationSequence = [];
-    }
-  }
-
-  tryPushDerivation(derivation, word) {
-    if (!derivation) {
-      this.derivationSequence.push(word);
-      return;
-    }
-    if (!derivationIsSilent(derivation)) {
-      this.derivationPath.push(derivation);
-      this.derivationSequence.push(word);
-    };
-  }
-
-  copy() {
-    return new DerivationInformation(this.derivationPath, this.derivationSequence);
-  }
-
-  getDerivationPathFinalForm() {
-    return this.derivationPath.slice().reverse();
-  }
-
-  getDerivationSequenceFinalForm() {
-    return this.derivationSequence.slice().reverse();
-  }
+function createNewDerivationSequence() {
+  return {
+    nonSilentDerivationsTaken: [],
+    nonSilentWordFormProgression: [],
+  };
 }
 
-function unconjugateRecursive(word, wordType, derivationInformation, level, levelLimit) {
-  // Invalid base cases
+function copyDerivationSequence(derivationSequence) {
+  return {
+    nonSilentDerivationsTaken: derivationSequence.nonSilentDerivationsTaken.slice(),
+    nonSilentWordFormProgression: derivationSequence.nonSilentWordFormProgression.slice(),
+  };
+}
+
+function addDerivationToSequence(derivationSequence, derivation, derivedWord) {
+  if (!derivationIsSilent(derivation)) {
+    derivationSequence = copyDerivationSequence(derivationSequence);
+    derivationSequence.nonSilentDerivationsTaken.push(derivation);
+    derivationSequence.nonSilentWordFormProgression.push(derivedWord);
+  }
+
+  return derivationSequence;
+}
+
+function addWordToDerivationSequence(derivationSequence, word) {
+  derivationSequence = copyDerivationSequence(derivationSequence);
+  derivationSequence.nonSilentWordFormProgression.push(word);
+  return derivationSequence;
+}
+
+function createDerivationSequenceOutputForm(derivationSequence) {
+  derivationSequence = copyDerivationSequence(derivationSequence);
+  derivationSequence.derivations = derivationSequence.nonSilentDerivationsTaken.reverse().map(derivation => derivation.conjugatedWordType);
+  derivationSequence.wordFormProgression = derivationSequence.nonSilentWordFormProgression.reverse();
+  delete derivationSequence.nonSilentDerivationsTaken;
+  delete derivationSequence.nonSilentWordFormProgression;
+  
+  return derivationSequence;
+}
+
+function unconjugateWord(word, derivation) {
+  return word.substring(0, word.length - derivation.conjugatedEnding.length) + derivation.unconjugatedEnding;
+}
+
+function wordEndsWithDerivationsConjugatedEnding(word, derivation) {
+  return word.endsWith(derivation.conjugatedEnding);
+}
+
+function unconjugateRecursive(word, wordType, derivationSequence, level, levelLimit) {
+  // Recursion is going too deep, abort.
+  //
+  // There should not be any potential for infinite recursion,
+  // however it is difficult to verify with certainty that
+  // there is none. Therefore, this is provided for safety.
   if (level > levelLimit) {
     return [];
   }
 
-  // Valid base case
+  // Check if we have reached a potentially valid result.
   let results = [];
-  let isIchiGoDanVerb = ichiGoDanVerbSet[word] === true;
-  let isSuruVerb = word.endsWith('する') && suruVerbSet[word.replace('する', '')] === true;
   let isDictionaryForm = wordType === WordType.GODAN_VERB || wordType === WordType.ICHIDAN_VERB || wordType === WordType.SENTENCE;
-  if ((isIchiGoDanVerb || isSuruVerb) && isDictionaryForm) {
-    let nextDerivationInformation = derivationInformation.copy();
-    nextDerivationInformation.tryPushDerivation(undefined, word);
+  if (isDictionaryForm) {
+    let derivationSequenceOutputForm = createDerivationSequenceOutputForm(addWordToDerivationSequence(derivationSequence, word));
     results.push({
       base: word,
-      derivationPath: nextDerivationInformation.getDerivationPathFinalForm(),
-      derivationSequence: nextDerivationInformation.getDerivationSequenceFinalForm()});
+      derivationSequence: derivationSequenceOutputForm,
+    });
   }
 
   // Take possible derivation paths
   for (let candidateDerivation of getCandidateDerivationsForWordType(wordType)) {
-    if (canTakeDerivationPath(word, candidateDerivation)) {
-      let nextDerivationInformation = derivationInformation.copy();
-      nextDerivationInformation.tryPushDerivation(candidateDerivation, word);
-      let unconjugatedWord = word.substring(0, word.length - candidateDerivation.conjugatedEnding.length) + candidateDerivation.unconjugatedEnding;
-      results = results.concat(unconjugateRecursive(unconjugatedWord, candidateDerivation.unconjugatedWordType, nextDerivationInformation, level + 1, levelLimit));
+    let shouldFollowThisCandidateDerivation = wordEndsWithDerivationsConjugatedEnding(word, candidateDerivation);
+    if (shouldFollowThisCandidateDerivation) {
+      let nextDerivationSequence = addDerivationToSequence(derivationSequence, candidateDerivation, word);
+      let unconjugatedWord = unconjugateWord(word, candidateDerivation);
+      results = results.concat(unconjugateRecursive(unconjugatedWord, candidateDerivation.unconjugatedWordType, nextDerivationSequence, level + 1, levelLimit));
     }
   }
   return results;
@@ -204,19 +152,17 @@ module.exports.unconjugate = function(word, fuzzy, recursionDepthLimit) {
 
   fuzzy = !!fuzzy;
   recursionDepthLimit = recursionDepthLimit || Math.MAX_SAFE_INTEGER;
-  let results = unconjugateRecursive(word, WordType.SENTENCE, new DerivationInformation(), 0, recursionDepthLimit);
+  let results = unconjugateRecursive(word, WordType.SENTENCE, createNewDerivationSequence(), 0, recursionDepthLimit);
 
   // If there are no results but the search should be fuzzy, chop off the last character one by one and see if we can get a substring that has results
   if (fuzzy && results.length === 0) {
     let truncatedWord = removeLastCharacter(word);
     while (truncatedWord && results.length === 0) {
-      results = unconjugateRecursive(truncatedWord, WordType.SENTENCE, new DerivationInformation(), 0, recursionDepthLimit);
+      results = unconjugateRecursive(truncatedWord, WordType.SENTENCE, createNewDerivationSequence(), 0, recursionDepthLimit);
       truncatedWord = removeLastCharacter(truncatedWord);
     }
   }
 
-  results = reduceResultDerivationsToWordTypes(results);
-  results = filterResultsWithImpossibleSequences(results);
   return sortByLikelihood(results);
 }
 

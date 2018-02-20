@@ -23,9 +23,9 @@ function assertDerivationPathMatches() {
 
   const combinationCharacter = '|';
   const desiredDerivationPathString = derivationPath.join(combinationCharacter);
-  const actualDerivationPathString = bestResult.derivationPath.join(combinationCharacter);
+  const actualDerivationPathString = bestResult.derivationSequence.derivations.join(combinationCharacter);
 
-  for (let derivation of derivationPath.concat(bestResult.derivationPath)) {
+  for (let derivation of derivationPath.concat(bestResult.derivationSequence.derivations)) {
     if (!derivation) {
       throw new Error('undefined derivation name for word ' + wordToDeconjugate);
     }
