@@ -176,7 +176,7 @@ function unconjugateRecursive(word, wordType, derivationInformation, level, leve
     results.push({
       base: word,
       derivationPath: nextDerivationInformation.getDerivationPathFinalForm(),
-      currentDerivationSequence: nextDerivationInformation.getDerivationSequenceFinalForm()});
+      derivationSequence: nextDerivationInformation.getDerivationSequenceFinalForm()});
   }
 
   // Take possible derivation paths
