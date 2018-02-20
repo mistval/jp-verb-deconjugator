@@ -191,21 +191,27 @@ function unconjugateRecursive(word, wordType, derivationInformation, level, leve
   return results;
 }
 
+function removeLastCharacter(str) {
+  return str.substring(0, str.length - 1);
+}
+
 module.exports.unconjugate = function(word, fuzzy, recursionDepthLimit) {
+  // Handle the 'recursionDepthLimit' argument being passed as the second argument, and the 'fuzzy' argument being omitted.
   if (typeof fuzzy === typeof 1) {
     recursionDepthLimit = fuzzy;
     fuzzy = undefined;
   }
+
   fuzzy = !!fuzzy;
-  recursionDepthLimit = recursionDepthLimit || 999999;
+  recursionDepthLimit = recursionDepthLimit || Math.MAX_SAFE_INTEGER;
   let results = unconjugateRecursive(word, WordType.SENTENCE, new DerivationInformation(), 0, recursionDepthLimit);
 
+  // If there are no results but the search should be fuzzy, chop off the last character one by one and see if we can get a substring that has results
   if (fuzzy && results.length === 0) {
-    // Chop off the last character one by one and see if we can get a substring that has results
-    let truncatedWord = word.substring(0, word.length - 1);
+    let truncatedWord = removeLastCharacter(word);
     while (truncatedWord && results.length === 0) {
       results = unconjugateRecursive(truncatedWord, WordType.SENTENCE, new DerivationInformation(), 0, recursionDepthLimit);
-      truncatedWord = truncatedWord.substring(0, truncatedWord.length - 1);
+      truncatedWord = removeLastCharacter(truncatedWord);
     }
   }
 
