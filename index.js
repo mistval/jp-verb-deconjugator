@@ -3,7 +3,6 @@ const derivationTable = require('./derivations.js');
 const WordType = require('./word_type.js');
 const DerivationAttribute = require('./derivation_attribute.js');
 const frequencyForWord = require('./frequencyForWord.json');
-const VerbType = require('./verb_type.js');
 
 // For performance, map each rule to the conjugated word type that it can follow.
 
