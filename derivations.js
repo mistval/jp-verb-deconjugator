@@ -1187,7 +1187,7 @@ module.exports = [
   {unconjugatedEnding: '', conjugatedEnding: 'ん', unconjugatedWordType: WordType.SENTENCE_ENDING_PARTICLES, conjugatedWordType: WordType.EXPLANATORY_NO_PARTICLE},
   {unconjugatedEnding: '', conjugatedEnding: 'よ', unconjugatedWordType: WordType.SENTENCE_ENDING_PARTICLES, conjugatedWordType: WordType.YO_PARTICLE},
   {unconjugatedEnding: '', conjugatedEnding: 'ね', unconjugatedWordType: WordType.SENTENCE_ENDING_PARTICLES, conjugatedWordType: WordType.NE_PARTICLE},
-  {unconjugatedEnding: '', conjugatedEnding: 'な', unconjugatedWordType: WordType.SENTENCE_ENDING_PARTICLES, conjugatedWordType: WordType.NA_PARTICLE},
+  {unconjugatedEnding: '', conjugatedEnding: 'な', unconjugatedWordType: WordType.SENTENCE_ENDING_PARTICLES, conjugatedWordType: WordType.NA_PARTICLE, cannotFollow: [[WordType.IMPERATIVE, WordType.SENTENCE_ENDING_PARTICLES]]},
   {unconjugatedEnding: '', conjugatedEnding: 'ぞ', unconjugatedWordType: WordType.SENTENCE_ENDING_PARTICLES, conjugatedWordType: WordType.ZO_PARTICLE},
   {unconjugatedEnding: '', conjugatedEnding: 'ぜ', unconjugatedWordType: WordType.SENTENCE_ENDING_PARTICLES, conjugatedWordType: WordType.ZE_PARTICLE},
   {unconjugatedEnding: '', conjugatedEnding: 'か', unconjugatedWordType: WordType.SENTENCE_ENDING_PARTICLES, conjugatedWordType: WordType.KA_PARTICLE},

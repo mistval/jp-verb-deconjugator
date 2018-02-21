@@ -216,8 +216,8 @@ describe('Grammar rules', function () {
     assertDerivationPathMatches('書かれてあった', '書く', WordType.PASSIVE, WordType.TE_FORM, WordType.ARU, WordType.PLAIN_PAST);
     //assertDerivationPathMatches('書かれてなかった', '書く', WordType.PASSIVE, WordType.TE_FORM, WordType.NEGATIVE_ARU_OR_IRU, WordType.PLAIN_PAST);
     assertDerivationPathMatches('撫でさせられていさせなさい', '撫でる', WordType.CAUSATIVE, WordType.POTENTIAL_PASSIVE, WordType.TE_FORM, WordType.IRU, WordType.CAUSATIVE, WordType.MASU_STEM, WordType.NASAI);
-    //assertDerivationPathMatches('撫でさせられていさせな', '撫でる', WordType.CAUSATIVE, WordType.POTENTIAL_PASSIVE, WordType.TE_FORM, WordType.IRU, WordType.CAUSATIVE, WordType.MASU_STEM, WordType.NASAI);
-    //assertDerivationPathMatches('撫でさせられてはいさせな', '撫でる', WordType.CAUSATIVE, WordType.POTENTIAL_PASSIVE, WordType.TE_FORM, WordType.WA_AFTER_TE, WordType.IRU, WordType.CAUSATIVE, WordType.MASU_STEM, WordType.NASAI);
+    assertDerivationPathMatches('撫でさせられていさせな', '撫でる', WordType.CAUSATIVE, WordType.POTENTIAL_PASSIVE, WordType.TE_FORM, WordType.IRU, WordType.CAUSATIVE, WordType.MASU_STEM, WordType.NASAI);
+    assertDerivationPathMatches('撫でさせられてはいさせな', '撫でる', WordType.CAUSATIVE, WordType.POTENTIAL_PASSIVE, WordType.TE_FORM, WordType.WA_AFTER_TE, WordType.IRU, WordType.CAUSATIVE, WordType.MASU_STEM, WordType.NASAI);
     assertDerivationPathMatches('書かず', '書く', WordType.ZU);
     assertDerivationPathMatches('書けず', '書く', WordType.POTENTIAL, WordType.ZU);
     assertDerivationPathMatches('書かれず', '書く', WordType.PASSIVE, WordType.ZU);
