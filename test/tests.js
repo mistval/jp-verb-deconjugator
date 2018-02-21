@@ -141,11 +141,11 @@ describe('Grammar rules', function () {
     assertDerivationPathMatches('得ません', '得る', WordType.MASU_STEM, WordType.POLITE_MASEN);
     assertDerivationPathMatches('語らないです', '語る', WordType.NEGATIVE_NAI_VERB, WordType.POLITE_DESU_VERB);
     assertDerivationPathMatches('語らないです', '語る', WordType.NEGATIVE_NAI_VERB, WordType.POLITE_DESU_VERB);
-    //assertDerivationPathMatches('弾けない', '弾ける', WordType.NEGATIVE_NAI_VERB);
+    assertDerivationPathMatches('弾けない', '弾く', WordType.POTENTIAL, WordType.NEGATIVE_NAI_VERB);
     assertDerivationPathMatches('集まりました', '集まる', WordType.MASU_STEM, WordType.POLITE_MASU, WordType.POLITE_MASHITA);
     assertDerivationPathMatches('信じました', '信じる', WordType.MASU_STEM, WordType.POLITE_MASU, WordType.POLITE_MASHITA);
     assertDerivationPathMatches('笑いませんでした', '笑う', WordType.MASU_STEM, WordType.POLITE_MASEN, WordType.POLITE_MASEN_DESHITA);
-    //assertDerivationPathMatches('放った', '放つ', WordType.PLAIN_PAST);
+    assertDerivationPathMatches('放った', '放る', WordType.PLAIN_PAST);
     assertDerivationPathMatches('覚えた', '覚える', WordType.PLAIN_PAST);
     assertDerivationPathMatches('言わなかった', '言う', WordType.NEGATIVE_NAI_VERB, WordType.PLAIN_PAST);
     assertDerivationPathMatches('照らなかった', '照る', WordType.NEGATIVE_NAI_VERB, WordType.PLAIN_PAST);
