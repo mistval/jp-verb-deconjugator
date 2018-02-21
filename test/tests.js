@@ -205,10 +205,10 @@ describe('Grammar rules', function () {
     assertDerivationPathMatches('信じるな', '信じる', WordType.NA_COMMAND);
     assertDerivationPathMatches('行くまい', '行く', WordType.NEGATIVE_VOLITIONAL);
     assertDerivationPathMatches('信じるまい', '信じる', WordType.NEGATIVE_VOLITIONAL);
-    //assertDerivationPathMatches('話している', '話す', WordType.TE_FORM, WordType.IRU);
-    //assertDerivationPathMatches('話してある', '話す', WordType.TE_FORM, WordType.ARU);
-    //assertDerivationPathMatches('話しておる', '話す', WordType.TE_FORM, WordType.ORU);
-    //assertDerivationPathMatches('話していさせて', '話す', WordType.TE_FORM, WordType.IRU, WordType.CAUSATIVE, WordType.TE_FORM);
+    assertDerivationPathMatches('話している', '話す', WordType.TE_FORM, WordType.IRU);
+    assertDerivationPathMatches('話してある', '話す', WordType.TE_FORM, WordType.ARU);
+    assertDerivationPathMatches('話しておる', '話す', WordType.TE_FORM, WordType.ORU);
+    assertDerivationPathMatches('話していさせて', '話す', WordType.TE_FORM, WordType.IRU, WordType.CAUSATIVE, WordType.TE_FORM);
     assertDerivationPathMatches('離されて', '離す', WordType.PASSIVE, WordType.TE_FORM);
     assertDerivationPathMatches('離せて', '離す', WordType.POTENTIAL, WordType.TE_FORM);
     assertDerivationPathMatches('得られて', '得る', WordType.POTENTIAL_PASSIVE, WordType.TE_FORM);
@@ -227,17 +227,17 @@ describe('Grammar rules', function () {
     assertDerivationPathMatches('撫でさせられたくなく', '撫でる', WordType.CAUSATIVE, WordType.POTENTIAL_PASSIVE, WordType.MASU_STEM, WordType.TAI, WordType.NEGATIVE_NAI_VERB, WordType.ADVERB);
     assertDerivationPathMatches('撫でさせられたくはなく', '撫でる', WordType.CAUSATIVE, WordType.POTENTIAL_PASSIVE, WordType.MASU_STEM, WordType.TAI, WordType.NEGATIVE_NAI_VERB, WordType.ADVERB);
     assertDerivationPathMatches('座ってはいる', '座る', WordType.TE_FORM, WordType.WA_AFTER_TE, WordType.IRU);
-    //assertDerivationPathMatches('されたくない', 'する', WordType.PASSIVE, WordType.MASU_STEM, WordType.TAI, WordType.NEGATIVE_NAI_VERB);
+    assertDerivationPathMatches('されたくない', 'する', WordType.PASSIVE, WordType.MASU_STEM, WordType.TAI, WordType.NEGATIVE_NAI_VERB);
     assertDerivationPathMatches('書きません', '書く', WordType.MASU_STEM, WordType.POLITE_MASEN);
-    //assertDerivationPathMatches('しませんでした', 'する', WordType.MASU_STEM, WordType.POLITE_MASEN, WordType.POLITE_MASEN_DESHITA);
+    assertDerivationPathMatches('しませんでした', 'する', WordType.MASU_STEM, WordType.POLITE_MASEN, WordType.POLITE_MASEN_DESHITA);
     assertDerivationPathMatches('為さいませんでした', '為さる', WordType.MASU_STEM, WordType.POLITE_MASEN, WordType.POLITE_MASEN_DESHITA);
     assertDerivationPathMatches('書いてください', '書く', WordType.TE_FORM, WordType.KUDASAI);
     assertDerivationPathMatches('撫でさせられぬ', '撫でる', WordType.CAUSATIVE, WordType.POTENTIAL_PASSIVE, WordType.NEGATIVE_NAI_VERB, WordType.NU);
     assertDerivationPathMatches('撫でさせられぬよ', '撫でる', WordType.CAUSATIVE, WordType.POTENTIAL_PASSIVE, WordType.NEGATIVE_NAI_VERB, WordType.NU, WordType.YO_PARTICLE);
     assertDerivationPathMatches('撫でさせられぬよね', '撫でる', WordType.CAUSATIVE, WordType.POTENTIAL_PASSIVE, WordType.NEGATIVE_NAI_VERB, WordType.NU, WordType.YO_PARTICLE, WordType.NE_PARTICLE);
     assertDerivationPathMatches('仰いませんでした', '仰る', WordType.MASU_STEM, WordType.POLITE_MASEN, WordType.POLITE_MASEN_DESHITA);
-    //assertDerivationPathMatches('話してあるだろう', '話す', WordType.TE_FORM, WordType.ARU, WordType.DAROU);
-    //assertDerivationPathMatches('話してあるでしょう', '話す', WordType.TE_FORM, WordType.ARU, WordType.DAROU, WordType.POLITE_DESHOU);
+    assertDerivationPathMatches('話してあるだろう', '話す', WordType.TE_FORM, WordType.ARU, WordType.DAROU);
+    assertDerivationPathMatches('話してあるでしょう', '話す', WordType.TE_FORM, WordType.ARU, WordType.DAROU, WordType.POLITE_DESHOU);
     assertDerivationPathMatches('行った方が良くないよ', '行う', WordType.PLAIN_PAST, WordType.HOU_GA_II, WordType.NEGATIVE_NAI_VERB, WordType.YO_PARTICLE);
   }).timeout(10000);
   it('Fuzzy derivation works', function() {
