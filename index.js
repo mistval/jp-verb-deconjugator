@@ -118,14 +118,14 @@ function wordEndsWithDerivationsConjugatedEnding(word, derivation) {
 }
 
 function tookInvalidDerivationPath(derivationSequence) {
-  let allDerivationsTaken = derivationSequence.allDerivationsTaken;
+  let allDerivationsTaken = derivationSequence.nonSilentDerivationsTaken;
   let lastDerivation = allDerivationsTaken[allDerivationsTaken.length - 1];
   let secondToLastDerivation = allDerivationsTaken[allDerivationsTaken.length - 2];
 
   if (!lastDerivation || !secondToLastDerivation) {
     return false;
   }
-  if (lastDerivation.cannotFollow && ~lastDerivation.cannotFollow.indexOf(secondToLastDerivation.conjugatedWordType)) {
+  if (secondToLastDerivation.cannotFollow && ~secondToLastDerivation.cannotFollow.indexOf(lastDerivation.conjugatedWordType)) {
     return true;
   }
 

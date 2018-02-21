@@ -1121,8 +1121,8 @@ module.exports = [
    */
   {unconjugatedEnding: 'いる', conjugatedEnding: 'いる', unconjugatedWordType: WordType.IRU, conjugatedWordType: WordType.ICHIDAN_VERB, attributes: [DerivationAttribute.SILENT]},
   {unconjugatedEnding: 'いる', conjugatedEnding: 'いる', unconjugatedWordType: WordType.IRU, conjugatedWordType: WordType.ICHIDAN_VERB, attributes: [DerivationAttribute.SILENT]},
-  {unconjugatedEnding: 'る', conjugatedEnding: 'る', unconjugatedWordType: WordType.IRU, conjugatedWordType: WordType.ICHIDAN_VERB, attributes: [DerivationAttribute.SILENT], cannotFollow: [WordType.MASU_STEM]},
-  {unconjugatedEnding: 'る', conjugatedEnding: 'る', unconjugatedWordType: WordType.IRU, conjugatedWordType: WordType.ICHIDAN_VERB, attributes: [DerivationAttribute.SILENT], cannotFollow: [WordType.MASU_STEM]},
+  {unconjugatedEnding: 'る', conjugatedEnding: 'る', unconjugatedWordType: WordType.IRU, conjugatedWordType: WordType.ICHIDAN_VERB, attributes: [DerivationAttribute.SILENT]},
+  {unconjugatedEnding: 'る', conjugatedEnding: 'る', unconjugatedWordType: WordType.IRU, conjugatedWordType: WordType.ICHIDAN_VERB, attributes: [DerivationAttribute.SILENT]},
 
   /*
    * Darou rules
@@ -1200,7 +1200,7 @@ module.exports = [
   {unconjugatedEnding: '', conjugatedEnding: 'けれども', unconjugatedWordType: WordType.SENTENCE_ENDING_PARTICLES, conjugatedWordType: WordType.KEDO_PARTICLE},
   {unconjugatedEnding: '', conjugatedEnding: 'のに', unconjugatedWordType: WordType.SENTENCE_ENDING_PARTICLES, conjugatedWordType: WordType.NONI_PARTICLE},
   {unconjugatedEnding: '', conjugatedEnding: 'まで', unconjugatedWordType: WordType.SENTENCE_ENDING_PARTICLES, conjugatedWordType: WordType.MADE_PARTICLE},
-  {unconjugatedEnding: '', conjugatedEnding: 'から', unconjugatedWordType: WordType.SENTENCE_ENDING_PARTICLES, conjugatedWordType: WordType.KARA_PARTICLE},
+  {unconjugatedEnding: '', conjugatedEnding: 'から', unconjugatedWordType: WordType.SENTENCE_ENDING_PARTICLES, conjugatedWordType: WordType.KARA_PARTICLE, cannotFollow: [WordType.TE_FORM]},
 
   /*
    * No particle rules
