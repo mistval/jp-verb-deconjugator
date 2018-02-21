@@ -17,12 +17,18 @@ for (let rule of derivationTable) {
   derivationRulesForConjugatedWordType[conjugatedWordType].push(rule);
 }
 
-function getFrequencyForWord(word) {
-  let frequency = frequencyForWord[word];
-  if (!frequency && word.endsWith('する')) {
-    frequency = frequencyForWord[word.substring(0, word.length - 2)];
+function getFrequencyForWordStrict(word) {
+  if (word === 'する') {
+    return 1;
   }
-  return frequency;
+  return frequencyForWord[word];
+}
+
+function getFrequencyForSuruVerb(word) {
+  if (word.endsWith('する')) {
+    return getFrequencyForWordStrict(word.substring(0, word.length - 2));
+  }
+  return undefined;
 }
 
 // Sort by the frequency of the base word.
@@ -32,19 +38,33 @@ function sortByLikelihood(results) {
     let aBase = a.base;
     let bBase = b.base;
 
-    let aBaseFrequency = getFrequencyForWord(aBase);
-    let bBaseFrequency = getFrequencyForWord(bBase);
+    let aBaseFrequencyStrict = getFrequencyForWordStrict(aBase);
+    let bBaseFrequencyStrict = getFrequencyForWordStrict(bBase);
 
-    if (!aBaseFrequency && !bBaseFrequency) {
-      return aBase.length - bBase.length;
+    if (aBaseFrequencyStrict && bBaseFrequencyStrict) {
+      return aBaseFrequencyStrict - bBaseFrequencyStrict;
     }
-    if (!aBaseFrequency) {
-      return 1;
-    }
-    if (!bBaseFrequency) {
+    if (aBaseFrequencyStrict) {
       return -1;
     }
-    return aBaseFrequency - bBaseFrequency;
+    if (bBaseFrequencyStrict) {
+      return 1;
+    }
+
+    let aBaseFrequencySuruVerb = getFrequencyForSuruVerb(aBase);
+    let bBaseFrequencySuruVerb = getFrequencyForSuruVerb(bBase);
+
+    if (aBaseFrequencySuruVerb && bBaseFrequencySuruVerb) {
+      return aBaseFrequencySuruVerb - bBaseFrequencySuruVerb;
+    }
+    if (aBaseFrequencySuruVerb) {
+      return -1;
+    }
+    if (bBaseFrequencySuruVerb) {
+      return 1;
+    }
+
+    return aBase.length - bBase.length;
   });
 }
 
