@@ -17,8 +17,12 @@ for (let rule of derivationTable) {
   derivationRulesForConjugatedWordType[conjugatedWordType].push(rule);
 }
 
-function frequencyRankExistsForWord(word) {
-  return frequencyForWord[word] !== undefined;
+function getFrequencyForWord(word) {
+  let frequency = frequencyForWord[word];
+  if (!frequency && word.endsWith('する')) {
+    frequency = frequencyForWord[word.substring(0, word.length - 2)];
+  }
+  return frequency;
 }
 
 // Sort by the frequency of the base word.
@@ -28,19 +32,19 @@ function sortByLikelihood(results) {
     let aBase = a.base;
     let bBase = b.base;
 
-    let aHasFrequency = frequencyRankExistsForWord(aBase);
-    let bHasFrequency = frequencyRankExistsForWord(bBase);
+    let aBaseFrequency = getFrequencyForWord(aBase);
+    let bBaseFrequency = getFrequencyForWord(bBase);
 
-    if (!aHasFrequency && !bHasFrequency) {
+    if (!aBaseFrequency && !bBaseFrequency) {
       return aBase.length - bBase.length;
     }
-    if (!aHasFrequency) {
+    if (!aBaseFrequency) {
       return 1;
     }
-    if (!bHasFrequency) {
+    if (!bBaseFrequency) {
       return -1;
     }
-    return frequencyForWord[aBase] - frequencyForWord[bBase];
+    return aBaseFrequency - bBaseFrequency;
   });
 }
 
