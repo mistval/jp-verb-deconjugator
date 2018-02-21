@@ -115,4 +115,5 @@ module.exports = {
   ADJECTIVE: 'adjective',
   SENTENCE_ENDING_PARTICLES: 'sentence ending particles (silent)',
   NEGATIVE_ARU_OR_IRU: 'Negative ある or いる',
+  SHORT_IRU: 'てる・でる Continuing State/Result',
 };

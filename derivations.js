@@ -74,7 +74,7 @@ module.exports = [
   {unconjugatedEnding: 'う', conjugatedEnding: 'える', unconjugatedWordType: WordType.GODAN_VERB, conjugatedWordType: WordType.POTENTIAL},
   {unconjugatedEnding: 'く', conjugatedEnding: 'ける', unconjugatedWordType: WordType.GODAN_VERB, conjugatedWordType: WordType.POTENTIAL},
   {unconjugatedEnding: 'ぐ', conjugatedEnding: 'げる', unconjugatedWordType: WordType.GODAN_VERB, conjugatedWordType: WordType.POTENTIAL},
-  {unconjugatedEnding: 'す', conjugatedEnding: 'せる', unconjugatedWordType: WordType.GODAN_VERB, conjugatedWordType: WordType.POTENTIAL},
+  {unconjugatedEnding: 'す', conjugatedEnding: 'せる', unconjugatedWordType: WordType.GODAN_VERB, conjugatedWordType: WordType.POTENTIAL, cannotFollow: [[WordType.SHORTENED_CAUSATIVE, WordType.GODAN_VERB]]},
   {unconjugatedEnding: 'つ', conjugatedEnding: 'てる', unconjugatedWordType: WordType.GODAN_VERB, conjugatedWordType: WordType.POTENTIAL},
   {unconjugatedEnding: 'ぬ', conjugatedEnding: 'ねる', unconjugatedWordType: WordType.GODAN_VERB, conjugatedWordType: WordType.POTENTIAL},
   {unconjugatedEnding: 'ぶ', conjugatedEnding: 'べる', unconjugatedWordType: WordType.GODAN_VERB, conjugatedWordType: WordType.POTENTIAL},
@@ -166,7 +166,7 @@ module.exports = [
   {unconjugatedEnding: 'る', conjugatedEnding: 'よう', unconjugatedWordType: WordType.ICHIDAN_VERB, conjugatedWordType: WordType.VOLITIONAL},
 
   // Masu stem form
-  {unconjugatedEnding: 'る', conjugatedEnding: '', unconjugatedWordType: WordType.ICHIDAN_VERB, conjugatedWordType: WordType.MASU_STEM},
+  {unconjugatedEnding: 'る', conjugatedEnding: '', unconjugatedWordType: WordType.ICHIDAN_VERB, conjugatedWordType: WordType.MASU_STEM, cannotFollow: [[WordType.SHORT_IRU, WordType.ICHIDAN_VERB]]},
   {unconjugatedEnding: 'う', conjugatedEnding: 'い', unconjugatedWordType: WordType.GODAN_VERB, conjugatedWordType: WordType.MASU_STEM},
   {unconjugatedEnding: 'く', conjugatedEnding: 'き', unconjugatedWordType: WordType.GODAN_VERB, conjugatedWordType: WordType.MASU_STEM},
   {unconjugatedEnding: 'ぐ', conjugatedEnding: 'ぎ', unconjugatedWordType: WordType.GODAN_VERB, conjugatedWordType: WordType.MASU_STEM},
@@ -552,8 +552,8 @@ module.exports = [
   {unconjugatedEnding: 'で', conjugatedEnding: 'でない', unconjugatedWordType: WordType.TE_FORM, conjugatedWordType: WordType.NEGATIVE_ARU_OR_IRU},
   {unconjugatedEnding: 'て', conjugatedEnding: 'ている', unconjugatedWordType: WordType.TE_FORM, conjugatedWordType: WordType.IRU},
   {unconjugatedEnding: 'で', conjugatedEnding: 'でいる', unconjugatedWordType: WordType.TE_FORM, conjugatedWordType: WordType.IRU},
-  {unconjugatedEnding: 'て', conjugatedEnding: 'てる', unconjugatedWordType: WordType.TE_FORM, conjugatedWordType: WordType.IRU},
-  {unconjugatedEnding: 'で', conjugatedEnding: 'でる', unconjugatedWordType: WordType.TE_FORM, conjugatedWordType: WordType.IRU},
+  {unconjugatedEnding: 'て', conjugatedEnding: 'てる', unconjugatedWordType: WordType.TE_FORM, conjugatedWordType: WordType.SHORT_IRU},
+  {unconjugatedEnding: 'で', conjugatedEnding: 'でる', unconjugatedWordType: WordType.TE_FORM, conjugatedWordType: WordType.SHORT_IRU},
   {unconjugatedEnding: 'て', conjugatedEnding: 'てある', unconjugatedWordType: WordType.TE_FORM, conjugatedWordType: WordType.ARU},
   {unconjugatedEnding: 'で', conjugatedEnding: 'である', unconjugatedWordType: WordType.TE_FORM, conjugatedWordType: WordType.ARU},
   {unconjugatedEnding: 'て', conjugatedEnding: 'ておる', unconjugatedWordType: WordType.TE_FORM, conjugatedWordType: WordType.ORU},
@@ -1120,9 +1120,7 @@ module.exports = [
    * Iru rules
    */
   {unconjugatedEnding: 'いる', conjugatedEnding: 'いる', unconjugatedWordType: WordType.IRU, conjugatedWordType: WordType.ICHIDAN_VERB, attributes: [DerivationAttribute.SILENT]},
-  {unconjugatedEnding: 'いる', conjugatedEnding: 'いる', unconjugatedWordType: WordType.IRU, conjugatedWordType: WordType.ICHIDAN_VERB, attributes: [DerivationAttribute.SILENT]},
-  {unconjugatedEnding: 'る', conjugatedEnding: 'る', unconjugatedWordType: WordType.IRU, conjugatedWordType: WordType.ICHIDAN_VERB, attributes: [DerivationAttribute.SILENT]},
-  {unconjugatedEnding: 'る', conjugatedEnding: 'る', unconjugatedWordType: WordType.IRU, conjugatedWordType: WordType.ICHIDAN_VERB, attributes: [DerivationAttribute.SILENT]},
+  {unconjugatedEnding: 'る', conjugatedEnding: 'る', unconjugatedWordType: WordType.SHORT_IRU, conjugatedWordType: WordType.ICHIDAN_VERB, attributes: [DerivationAttribute.SILENT]},
 
   /*
    * Darou rules
@@ -1200,7 +1198,7 @@ module.exports = [
   {unconjugatedEnding: '', conjugatedEnding: 'けれども', unconjugatedWordType: WordType.SENTENCE_ENDING_PARTICLES, conjugatedWordType: WordType.KEDO_PARTICLE},
   {unconjugatedEnding: '', conjugatedEnding: 'のに', unconjugatedWordType: WordType.SENTENCE_ENDING_PARTICLES, conjugatedWordType: WordType.NONI_PARTICLE},
   {unconjugatedEnding: '', conjugatedEnding: 'まで', unconjugatedWordType: WordType.SENTENCE_ENDING_PARTICLES, conjugatedWordType: WordType.MADE_PARTICLE},
-  {unconjugatedEnding: '', conjugatedEnding: 'から', unconjugatedWordType: WordType.SENTENCE_ENDING_PARTICLES, conjugatedWordType: WordType.KARA_PARTICLE, cannotFollow: [WordType.TE_FORM]},
+  {unconjugatedEnding: '', conjugatedEnding: 'から', unconjugatedWordType: WordType.SENTENCE_ENDING_PARTICLES, conjugatedWordType: WordType.KARA_PARTICLE, cannotFollow: [[WordType.TE_FORM, WordType.SENTENCE_ENDING_PARTICLES]]},
 
   /*
    * No particle rules

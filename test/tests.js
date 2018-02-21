@@ -45,7 +45,7 @@ describe('Grammar rules', function () {
     assertDerivationPathMatches('言ってもいいですよ', '言う', WordType.TE_FORM, WordType.MO_AFTER_TE, WordType.II, WordType.POLITE_DESU_VERB, WordType.YO_PARTICLE);
     assertDerivationPathMatches('遊べそうじゃないね', '遊ぶ', WordType.POTENTIAL, WordType.MASU_STEM, WordType.APPEARANCE, WordType.DA, WordType.NEGATIVE_NAI_VERB, WordType.NE_PARTICLE);
     assertDerivationPathMatches('誘ってもらわれてくれなかった', '誘う', WordType.TE_FORM, WordType.MORAU, WordType.PASSIVE, WordType.TE_FORM, WordType.KURERU, WordType.NEGATIVE_NAI_VERB, WordType.PLAIN_PAST);
-    assertDerivationPathMatches('遊んでるべく', '遊ぶ', WordType.TE_FORM, WordType.IRU, WordType.BEKU);
+    assertDerivationPathMatches('遊んでるべく', '遊ぶ', WordType.TE_FORM, WordType.SHORT_IRU, WordType.BEKU);
     assertDerivationPathMatches('敷きやがりなさい', '敷く', WordType.MASU_STEM, WordType.YAGARU, WordType.MASU_STEM, WordType.NASAI);
     assertDerivationPathMatches('重なり次第だ', '重なる', WordType.MASU_STEM, WordType.SHIDAI, WordType.DA);
     assertDerivationPathMatches('生き過ぎだ', '生きる', WordType.MASU_STEM, WordType.SUGI, WordType.DA);

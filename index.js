@@ -32,7 +32,7 @@ function sortByLikelihood(results) {
     let bHasFrequency = frequencyRankExistsForWord(bBase);
 
     if (!aHasFrequency && !bHasFrequency) {
-      return 0;
+      return aBase.length - bBase.length;
     }
     if (!aHasFrequency) {
       return 1;
@@ -40,7 +40,7 @@ function sortByLikelihood(results) {
     if (!bHasFrequency) {
       return -1;
     }
-    return frequencyForWord[bBase] - frequencyForWord[aBase];
+    return frequencyForWord[aBase] - frequencyForWord[bBase];
   });
 }
 
@@ -118,15 +118,25 @@ function wordEndsWithDerivationsConjugatedEnding(word, derivation) {
 }
 
 function tookInvalidDerivationPath(derivationSequence) {
-  let allDerivationsTaken = derivationSequence.nonSilentDerivationsTaken;
-  let lastDerivation = allDerivationsTaken[allDerivationsTaken.length - 1];
-  let secondToLastDerivation = allDerivationsTaken[allDerivationsTaken.length - 2];
+  let allDerivationsTaken = derivationSequence.allDerivationsTaken;
 
-  if (!lastDerivation || !secondToLastDerivation) {
-    return false;
-  }
-  if (secondToLastDerivation.cannotFollow && ~secondToLastDerivation.cannotFollow.indexOf(lastDerivation.conjugatedWordType)) {
-    return true;
+  for (let i = 0; i < allDerivationsTaken.length; ++i) {
+    let derivation = allDerivationsTaken[i];
+    if (!derivation.cannotFollow) {
+      continue;
+    }
+    for (let forbiddenSuccessorSequence of derivation.cannotFollow) {
+      let nextDerivationOffset = 1;
+      for (let g = forbiddenSuccessorSequence.length - 1; g >= 0; --g, ++nextDerivationOffset) {
+        let nextDerivation = allDerivationsTaken[i + nextDerivationOffset];
+        if (!nextDerivation || nextDerivation.conjugatedWordType !== forbiddenSuccessorSequence[g]) {
+          break;
+        }
+        if (g === 0) {
+          return true;
+        }
+      }
+    }
   }
 
   return false;
