@@ -1,4 +1,13 @@
-'use strict'
+/*
+ * This module uses the grammar rules listed in derivations.js
+ * and recursively applies them to the input string until the
+ * verb root is reached. There will most likely be more than
+ * one apparently viable deconjugation, so effort is made to
+ * sort them according to liklihood.
+ *
+ * Full project source: https://github.com/mistval/jp-verb-conjugator
+ */
+
 const derivationTable = require('./derivations.js');
 const WordType = require('./word_type.js');
 const DerivationAttribute = require('./derivation_attribute.js');
