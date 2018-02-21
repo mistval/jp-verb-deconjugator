@@ -126,12 +126,6 @@ function addDerivationToSequence(derivationSequence, derivation, derivedWord) {
   return derivationSequence;
 }
 
-function addWordToWordFormProgression(derivationSequence, word) {
-  derivationSequence = copyDerivationSequence(derivationSequence);
-  derivationSequence.nonSilentWordFormProgression.push(word);
-  return derivationSequence;
-}
-
 function createDerivationSequenceOutputForm(derivationSequence) {
   /*
    * This module works recursively from the end of the conjugated word, but
@@ -207,7 +201,7 @@ function unconjugateRecursive(word, wordType, derivationSequence, level, levelLi
   let results = [];
   const isDictionaryForm = wordType === WordType.GODAN_VERB || wordType === WordType.ICHIDAN_VERB || wordType === WordType.SENTENCE;
   if (isDictionaryForm) {
-    const derivationSequenceOutputForm = createDerivationSequenceOutputForm(addWordToWordFormProgression(derivationSequence, word));
+    const derivationSequenceOutputForm = createDerivationSequenceOutputForm(derivationSequence);
     results.push({
       base: word,
       derivationSequence: derivationSequenceOutputForm,
