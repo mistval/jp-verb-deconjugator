@@ -135,7 +135,7 @@ describe('Grammar rules', function () {
     assertDerivationPathMatches('励ます', '励ます');
     assertDerivationPathMatches('話します', '話す', WordType.MASU_STEM, WordType.POLITE_MASU);
     assertDerivationPathMatches('話すです', '話す', WordType.POLITE_DESU_VERB);
-    //assertDerivationPathMatches('信じます', '信じる', WordType.MASU_STEM, WordType.POLITE_MASU);
+    assertDerivationPathMatches('信じます', '信じる', WordType.MASU_STEM, WordType.POLITE_MASU);
     assertDerivationPathMatches('信じるです', '信じる', WordType.POLITE_DESU_VERB);
     assertDerivationPathMatches('行きません', '行く', WordType.MASU_STEM, WordType.POLITE_MASEN);
     assertDerivationPathMatches('得ません', '得る', WordType.MASU_STEM, WordType.POLITE_MASEN);
