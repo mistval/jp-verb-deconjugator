@@ -31,6 +31,19 @@ function getFrequencyForSuruVerb(word) {
   return undefined;
 }
 
+function compareFrequency(frequencyA, frequencyB) {
+  if (frequencyA && frequencyB) {
+    return frequencyA - frequencyB;
+  }
+  if (frequencyA) {
+    return -1;
+  }
+  if (frequencyB) {
+    return 1;
+  }
+  return 0;
+}
+
 // Sort by the frequency of the base word.
 function sortByLikelihood(results) {
   let resultsCopy = results.slice();
@@ -38,30 +51,14 @@ function sortByLikelihood(results) {
     let aBase = a.base;
     let bBase = b.base;
 
-    let aBaseFrequencyStrict = getFrequencyForWordStrict(aBase);
-    let bBaseFrequencyStrict = getFrequencyForWordStrict(bBase);
-
-    if (aBaseFrequencyStrict && bBaseFrequencyStrict) {
-      return aBaseFrequencyStrict - bBaseFrequencyStrict;
-    }
-    if (aBaseFrequencyStrict) {
-      return -1;
-    }
-    if (bBaseFrequencyStrict) {
-      return 1;
+    let strictCompare = compareFrequency(getFrequencyForWordStrict(aBase), getFrequencyForWordStrict(bBase));
+    if (strictCompare) {
+      return strictCompare;
     }
 
-    let aBaseFrequencySuruVerb = getFrequencyForSuruVerb(aBase);
-    let bBaseFrequencySuruVerb = getFrequencyForSuruVerb(bBase);
-
-    if (aBaseFrequencySuruVerb && bBaseFrequencySuruVerb) {
-      return aBaseFrequencySuruVerb - bBaseFrequencySuruVerb;
-    }
-    if (aBaseFrequencySuruVerb) {
-      return -1;
-    }
-    if (bBaseFrequencySuruVerb) {
-      return 1;
+    let suruVerbCompare = compareFrequency(getFrequencyForSuruVerb(aBase), getFrequencyForSuruVerb(bBase));
+    if (suruVerbCompare) {
+      return suruVerbCompare;
     }
 
     return aBase.length - bBase.length;
@@ -72,7 +69,7 @@ function filterWordEndsWithConjugatedWordEnding(word, derivations) {
   return derivations.filter(derivation => word.endsWith(derivation.conjugatedEnding));
 }
 
-function getCandidateDerivations(wordType, word, previousNonSilentDerivation) {
+function getCandidateDerivations(wordType, word) {
   // SENTENCE is a special word type that allows any
   // derivation whose conjugated word ending matches its/
   // ending.
@@ -117,7 +114,7 @@ function addDerivationToSequence(derivationSequence, derivation, derivedWord) {
   return derivationSequence;
 }
 
-function addWordToDerivationSequence(derivationSequence, word) {
+function addWordToWordFormProgression(derivationSequence, word) {
   derivationSequence = copyDerivationSequence(derivationSequence);
   derivationSequence.nonSilentWordFormProgression.push(word);
   return derivationSequence;
@@ -129,16 +126,13 @@ function createDerivationSequenceOutputForm(derivationSequence) {
   derivationSequence.wordFormProgression = derivationSequence.nonSilentWordFormProgression.reverse();
   delete derivationSequence.nonSilentDerivationsTaken;
   delete derivationSequence.nonSilentWordFormProgression;
+  delete derivationSequence.allDerivationsTaken;
   
   return derivationSequence;
 }
 
 function unconjugateWord(word, derivation) {
   return word.substring(0, word.length - derivation.conjugatedEnding.length) + derivation.unconjugatedEnding;
-}
-
-function wordEndsWithDerivationsConjugatedEnding(word, derivation) {
-  return word.endsWith(derivation.conjugatedEnding);
 }
 
 function tookInvalidDerivationPath(derivationSequence) {
@@ -179,14 +173,11 @@ function unconjugateRecursive(word, wordType, derivationSequence, level, levelLi
   if (level > levelLimit) {
     return [];
   }
-
-  let previousNonSilentDerivation = derivationSequence.nonSilentDerivationsTaken[derivationSequence.nonSilentDerivationsTaken.length - 1];
-
   // Check if we have reached a potentially valid result.
   let results = [];
   let isDictionaryForm = wordType === WordType.GODAN_VERB || wordType === WordType.ICHIDAN_VERB || wordType === WordType.SENTENCE;
   if (isDictionaryForm) {
-    let derivationSequenceOutputForm = createDerivationSequenceOutputForm(addWordToDerivationSequence(derivationSequence, word));
+    let derivationSequenceOutputForm = createDerivationSequenceOutputForm(addWordToWordFormProgression(derivationSequence, word));
     results.push({
       base: word,
       derivationSequence: derivationSequenceOutputForm,
@@ -194,7 +185,7 @@ function unconjugateRecursive(word, wordType, derivationSequence, level, levelLi
   }
 
   // Take possible derivation paths
-  for (let candidateDerivation of getCandidateDerivations(wordType, word, previousNonSilentDerivation)) {
+  for (let candidateDerivation of getCandidateDerivations(wordType, word)) {
     let nextDerivationSequence = addDerivationToSequence(derivationSequence, candidateDerivation, word);
     let unconjugatedWord = unconjugateWord(word, candidateDerivation);
     results = results.concat(unconjugateRecursive(unconjugatedWord, candidateDerivation.unconjugatedWordType, nextDerivationSequence, level + 1, levelLimit));
