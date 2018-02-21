@@ -54,8 +54,6 @@ http://www.guidetojapanese.org/learn/grammar/compound#Expressing_a_sequence_of_v
 
 ## Tests
 
-100% of the code is covered by tests, however not every rule is covered.
-
 After installing nyc and mocha globally, run tests with ```npm test```
 
 ## About
