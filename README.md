@@ -17,19 +17,21 @@ Results in the following:
 [
   {
     "base": "言う",
-    "derivationPath": [
-      "Passive Form",
-      "て・で Form",
-      "みる To Try To Do",
-      "ば Conditional Form"
-    ],
-    "currentDerivationSequence": [
-      "言う",
-      "言われる",
-      "言われて",
-      "言われてみる",
-      "言われてみれば"
-    ]
+    "derivationSequence": {
+      "derivations": [
+        "言う",
+        "言われる",
+        "言われて",
+        "言われてみる",
+        "言われてみれば"
+      ],
+      "wordFormProgression": [
+        "Passive Form",
+        "て・で Form",
+        "みる To Try To Do",
+        "ば Conditional Form"
+      ]
+    },
   }
 ]
 ```

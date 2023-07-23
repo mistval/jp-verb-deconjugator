@@ -27,5 +27,8 @@
     "url": "https://github.com/mistval/jp-verb-deconjugator/issues"
   },
   "homepage": "https://github.com/mistval/jp-verb-deconjugator#readme",
-  "dependencies": {}
+  "devDependencies": {
+    "mocha": "^10.2.0",
+    "nyc": "^15.1.0"
+  }
 }
