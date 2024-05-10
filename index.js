@@ -8,10 +8,10 @@
  * Full project source: https://github.com/mistval/jp-verb-conjugator
  */
 
-const derivationTable = require('./derivations.js');
-const WordType = require('./word_type.js');
-const DerivationAttribute = require('./derivation_attribute.js');
-const frequencyForWord = require('./frequencyForWord.json');
+const derivationTable = require("./derivations.js");
+const WordType = require("./word_type.js");
+const DerivationAttribute = require("./derivation_attribute.js");
+const frequencyForWord = require("./frequencyForWord.json");
 
 /*
  * For performance, map each rule to the conjugated word type that it can follow.
@@ -27,7 +27,7 @@ for (let rule of derivationTable) {
 }
 
 function getFrequencyForSuruVerb(word) {
-  if (word.endsWith('する')) {
+  if (word.endsWith("する")) {
     const suruBase = word.substring(0, word.length - 2);
     return frequencyForWord[suruBase];
   }
@@ -60,13 +60,19 @@ function sortByLikelihood(results) {
     const bBase = b.base;
 
     // First try comparing the words as-is based on their frequency.
-    const strictCompare = compareFrequency(frequencyForWord[aBase], frequencyForWord[bBase]);
+    const strictCompare = compareFrequency(
+      frequencyForWord[aBase],
+      frequencyForWord[bBase]
+    );
     if (strictCompare) {
       return strictCompare;
     }
 
     // If neither word is preferred as-is, then try comparing the words as suru verbs.
-    const suruVerbCompare = compareFrequency(getFrequencyForSuruVerb(aBase), getFrequencyForSuruVerb(bBase));
+    const suruVerbCompare = compareFrequency(
+      getFrequencyForSuruVerb(aBase),
+      getFrequencyForSuruVerb(bBase)
+    );
     if (suruVerbCompare) {
       return suruVerbCompare;
     }
@@ -91,11 +97,16 @@ function getCandidateDerivations(wordType, word) {
   }
 
   // Return only the derivations whose conjugated endings match the end of the word.
-  return candidateDerivations.filter(derivation => word.endsWith(derivation.conjugatedEnding));
+  return candidateDerivations.filter((derivation) =>
+    word.endsWith(derivation.conjugatedEnding)
+  );
 }
 
 function derivationIsSilent(derivation) {
-  return derivation.attributes && derivation.attributes.indexOf(DerivationAttribute.SILENT) !== -1;
+  return (
+    derivation.attributes &&
+    derivation.attributes.indexOf(DerivationAttribute.SILENT) !== -1
+  );
 }
 
 function createNewDerivationSequence() {
@@ -133,14 +144,22 @@ function createDerivationSequenceOutputForm(derivationSequence) {
    * hence the reverse() calls.
    */
   return {
-    derivations: derivationSequence.nonSilentDerivationsTaken.slice().reverse().map(derivation => derivation.conjugatedWordType),
-    wordFormProgression: derivationSequence.nonSilentWordFormProgression.slice().reverse(),
+    derivations: derivationSequence.nonSilentDerivationsTaken
+      .slice()
+      .reverse()
+      .map((derivation) => derivation.conjugatedWordType),
+    wordFormProgression: derivationSequence.nonSilentWordFormProgression
+      .slice()
+      .reverse(),
   };
 }
 
 function unconjugateWord(word, derivation) {
   // Slice off the conjugated ending and replace it with the unconjugated ending.
-  return word.substring(0, word.length - derivation.conjugatedEnding.length) + derivation.unconjugatedEnding;
+  return (
+    word.substring(0, word.length - derivation.conjugatedEnding.length) +
+    derivation.unconjugatedEnding
+  );
 }
 
 function tookInvalidDerivationPath(derivationSequence) {
@@ -164,9 +183,16 @@ function tookInvalidDerivationPath(derivationSequence) {
        * reverse order, so we have to consider the forbidden predecessor sequences in reverse
        * order also. So start at the back of the sequence.
        */
-      for (let g = forbiddenPredecessorSequence.length - 1; g >= 0; --g, ++nextDerivationOffset) {
+      for (
+        let g = forbiddenPredecessorSequence.length - 1;
+        g >= 0;
+        --g, ++nextDerivationOffset
+      ) {
         const nextDerivation = allDerivationsTaken[i + nextDerivationOffset];
-        if (!nextDerivation || nextDerivation.conjugatedWordType !== forbiddenPredecessorSequence[g]) {
+        if (
+          !nextDerivation ||
+          nextDerivation.conjugatedWordType !== forbiddenPredecessorSequence[g]
+        ) {
           break;
         }
         if (g === 0) {
@@ -179,7 +205,13 @@ function tookInvalidDerivationPath(derivationSequence) {
   return false; // No forbidden predecessor sequence was matched.
 }
 
-function unconjugateRecursive(word, wordType, derivationSequence, level, levelLimit) {
+function unconjugateRecursive(
+  word,
+  wordType,
+  derivationSequence,
+  level,
+  levelLimit
+) {
   if (tookInvalidDerivationPath(derivationSequence)) {
     return [];
   }
@@ -199,9 +231,13 @@ function unconjugateRecursive(word, wordType, derivationSequence, level, levelLi
 
   // Check if we have reached a potentially valid result, and if so, add it to the results.
   let results = [];
-  const isDictionaryForm = wordType === WordType.GODAN_VERB || wordType === WordType.ICHIDAN_VERB || wordType === WordType.SENTENCE;
+  const isDictionaryForm =
+    wordType === WordType.GODAN_VERB ||
+    wordType === WordType.ICHIDAN_VERB ||
+    wordType === WordType.SENTENCE;
   if (isDictionaryForm) {
-    const derivationSequenceOutputForm = createDerivationSequenceOutputForm(derivationSequence);
+    const derivationSequenceOutputForm =
+      createDerivationSequenceOutputForm(derivationSequence);
     results.push({
       base: word,
       derivationSequence: derivationSequenceOutputForm,
@@ -210,9 +246,21 @@ function unconjugateRecursive(word, wordType, derivationSequence, level, levelLi
 
   // Take possible derivation paths and recurse.
   for (let candidateDerivation of getCandidateDerivations(wordType, word)) {
-    const nextDerivationSequence = addDerivationToSequence(derivationSequence, candidateDerivation, word);
+    const nextDerivationSequence = addDerivationToSequence(
+      derivationSequence,
+      candidateDerivation,
+      word
+    );
     const unconjugatedWord = unconjugateWord(word, candidateDerivation);
-    results = results.concat(unconjugateRecursive(unconjugatedWord, candidateDerivation.unconjugatedWordType, nextDerivationSequence, level + 1, levelLimit));
+    results = results.concat(
+      unconjugateRecursive(
+        unconjugatedWord,
+        candidateDerivation.unconjugatedWordType,
+        nextDerivationSequence,
+        level + 1,
+        levelLimit
+      )
+    );
   }
   return results;
 }
@@ -221,7 +269,7 @@ function removeLastCharacter(str) {
   return str.substring(0, str.length - 1);
 }
 
-module.exports.unconjugate = function(word, fuzzy, recursionDepthLimit) {
+module.exports.unconjugate = function (word, fuzzy, recursionDepthLimit) {
   // Handle the 'recursionDepthLimit' argument being passed as the second argument, and the 'fuzzy' argument being omitted.
   if (typeof fuzzy === typeof 1) {
     recursionDepthLimit = fuzzy;
@@ -230,19 +278,31 @@ module.exports.unconjugate = function(word, fuzzy, recursionDepthLimit) {
 
   fuzzy = !!fuzzy;
   recursionDepthLimit = recursionDepthLimit || Math.MAX_SAFE_INTEGER;
-  const results = unconjugateRecursive(word, WordType.SENTENCE, createNewDerivationSequence(), 0, recursionDepthLimit);
+  let results = unconjugateRecursive(
+    word,
+    WordType.SENTENCE,
+    createNewDerivationSequence(),
+    0,
+    recursionDepthLimit
+  );
 
   // If there are no results but the search should be fuzzy, chop off the last character one by one and see if we can get a substring that has results
   if (fuzzy && results.length === 0) {
-    const truncatedWord = removeLastCharacter(word);
+    let truncatedWord = removeLastCharacter(word);
     while (truncatedWord && results.length === 0) {
-      results = unconjugateRecursive(truncatedWord, WordType.SENTENCE, createNewDerivationSequence(), 0, recursionDepthLimit);
+      results = unconjugateRecursive(
+        truncatedWord,
+        WordType.SENTENCE,
+        createNewDerivationSequence(),
+        0,
+        recursionDepthLimit
+      );
       truncatedWord = removeLastCharacter(truncatedWord);
     }
   }
 
   return sortByLikelihood(results);
-}
+};
 
 module.exports.WordType = WordType;
-module.exports.GrammarLinkForWordType = require('./grammar_explanations.js');
+module.exports.GrammarLinkForWordType = require("./grammar_explanations.js");
